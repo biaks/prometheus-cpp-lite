@@ -56,8 +56,8 @@ namespace prometheus {
     public:
 
       using Hash      = std::size_t;
-      using Label     = std::pair<const std::string, std::string>;
-      using Labels    = std::map <std::string, std::string>;
+      using Label     = std::pair<const std::string, const std::string>;
+      using Labels    = std::map <const std::string, const std::string>;
       using MetricPtr = std::unique_ptr<Metric>;
 
       const   Metric::Type                 type;
@@ -345,7 +345,7 @@ namespace prometheus {
       /// To finish the configuration of the Counter metric, register it with
       /// Register(Registry&).
       template <typename Registry>
-      static CustomFamily& Build(Registry& registry, const std::string& name, const std::string& help, const Family::Labels& labels) {
+      static CustomFamily& Build(Registry& registry, const std::string& name, const std::string& help, const Family::Labels& labels = Family::Labels()) {
         return registry.Add<CustomFamily>(name, help, labels);
       }
 

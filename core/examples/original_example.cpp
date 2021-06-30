@@ -24,7 +24,7 @@ int main() {
   //
   // @note please follow the metric-naming best-practices:
   // https://prometheus.io/docs/practices/naming/
-  auto& packet_counter = Counter<>::Family::Build(registry, "observed_packets_total", "Number of observed packets", {});
+  auto& packet_counter = Counter<>::Family::Build(registry, "observed_packets_total", "Number of observed packets");
 
   // add and remember dimensional data, incrementing those is very cheap
   auto& tcp_rx_counter = packet_counter.Add({ {"protocol", "tcp"}, {"direction", "rx"} });
@@ -35,7 +35,7 @@ int main() {
   // add a counter whose dimensional data is not known at compile time
   // nevertheless dimensional values should only occur in low cardinality:
   // https://prometheus.io/docs/practices/naming/#labels
-  auto& http_requests_counter = Counter<>::Family::Build(registry, "http_requests_total", "Number of HTTP requests", {});
+  auto& http_requests_counter = Counter<>::Family::Build(registry, "http_requests_total", "Number of HTTP requests");
 
   // ask the exposer to scrape the registry on incoming HTTP requests
   //exposer.RegisterCollectable(registry);
@@ -46,13 +46,12 @@ int main() {
 
     if (random_value & 1) tcp_rx_counter.Increment();
     if (random_value & 2) tcp_tx_counter.Increment();
-    if (random_value & 4) udp_rx_counter.Increment();
-    if (random_value & 8) udp_tx_counter.Increment();
+    if (random_value & 4) udp_rx_counter.Increment(10);
+    if (random_value & 8) udp_tx_counter.Increment(10);
 
     const std::array<std::string, 4> methods = { "GET", "PUT", "POST", "HEAD" };
     auto method = methods.at(random_value % methods.size());
-    // dynamically calling Family<T>.Add() works but is slow and should be
-    // avoided
+    // dynamically calling Family<T>.Add() works but is slow and should be avoided
     http_requests_counter.Add({ {"method", method} }).Increment();
 
     TextSerializer text_serializer;

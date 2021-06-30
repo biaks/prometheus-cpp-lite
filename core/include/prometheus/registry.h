@@ -109,7 +109,7 @@ namespace prometheus {
         }
 
         if (found_one_but_not_merge)               // this strange rule was in previos version prometheus cpp
-          throw std::invalid_argument("Family name already exists and can't merge");
+          throw std::invalid_argument("Family name already exists with different labels");
 
         std::unique_ptr<CustomFamily> new_family_ptr (new CustomFamily(name, help, labels));
         CustomFamily& new_family = *new_family_ptr;

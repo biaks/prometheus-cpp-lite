@@ -1,10 +1,11 @@
 #pragma once
 
-#include <atomic>
-#include <ctime>
-
+#include "prometheus/atomic_floating.h"
 #include "prometheus/metric.h"
 #include "prometheus/family.h"
+
+#include <atomic>
+#include <ctime>
 
 namespace prometheus {
 
@@ -23,68 +24,71 @@ namespace prometheus {
   template <typename Value = uint64_t>
   class Gauge : public Metric {
 
-    std::atomic<Value> value_{ 0 };
+    std::atomic<Value> value { 0 };
 
     public:
 
-      //void Change(const value_type_t value) {
-        // compare_exchange_weak используется здесь не по назначению
-        // https://habr.com/ru/post/328348/
-        // его идея: копировали в локальную переменную через load(), превратили старую локальную переменную в новую локальную переменную,
-        // затем одновременно проверяем, что старая локальная переменная совпадает со значением в atomic и, если совпадает, записать туда
-        // значение новой локальной переменной
-        // а можно просто сделать value_++, будет вызван атомарный masgine increment for long long
-        //value_type_t current = value_.load(); value_.operator++();
-        //while (!value_.compare_exchange_weak(current, current + value));
-      //}
-
-    public:
+      using Family = CustomFamily<Gauge<Value>>;
 
       static const Metric::Type static_type = Metric::Type::Gauge;
 
-      /// \brief Create a gauge that starts at 0.
-      Gauge() : Metric (static_type) {}
+      
+      Gauge()                   : Metric (static_type) {}                  ///< \brief Create a gauge that starts at 0.
+      Gauge(const Value value_) : Metric(static_type), value{ value_ } {}  ///< \brief Create a gauge that starts at the given amount.
 
-      /// \brief Create a gauge that starts at the given amount.
-      Gauge(const Value value) : Metric(static_type), value_{ value } {}
+      // original API
 
-      /// \brief Increment the gauge by 1.
-      void Increment() { value_++; }
+      void Increment() { ++value; }                      ///< \brief Increment the gauge by 1.
+      void Increment(const Value& val) { value += val; } ///< \brief Increment the gauge by the given amount.
+      
+      void Decrement() { --value; }                      ///< \brief Decrement the gauge by 1.
+      void Decrement(const Value& val) { value -= val; } ///< \brief Decrement the gauge by the given amount.
 
-      /// \brief Increment the gauge by the given amount.
-      void Increment(const Value value) { value_ += value; }
-
-      /// \brief Decrement the gauge by 1.
-      void Decrement() { value_--; }
-
-      /// \brief Decrement the gauge by the given amount.
-      void Decrement(const Value value) { value_ -= value; }
-
-      /// \brief Set the gauge to the given value.
-      void Set(const Value value) { value_ = value; }
-
-      /// \brief Set the gauge to the current unixtime in seconds.
-      void SetToCurrentTime() {
+      void SetToCurrentTime() {                          ///< \brief Set the gauge to the current unixtime in seconds.
         const time_t time = std::time(nullptr);
-        Set(static_cast<Value>(time));
+        value = static_cast<Value>(time);
       }
+      void Set(const Value& val) { value = val; }        ///< \brief Set the gauge to the given value.
+      const Value& Get() const { return value; }         ///< \brief Get the current value of the gauge.
 
-      /// \brief Get the current value of the gauge.
-      Value Get() const { return value_; }
-
-      /// \brief Get the current value of the gauge.
-      ///
-      /// Collect is called by the Registry when collecting metrics.
-      virtual ClientMetric Collect() const {
+      virtual ClientMetric Collect() const {             ///< \brief Get the current value of the gauge. Collect is called by the Registry when collecting metrics.
         ClientMetric metric;
         metric.gauge.value = Get();
         return metric;
       }
 
+      // new API
+
+      Gauge& operator ++() {
+        ++value;
+        return *this;
+      }
+
+      Gauge& operator++ (int) {
+        ++value;
+        return *this;
+      }
+
+      Gauge& operator --() {
+        --value;
+        return *this;
+      }
+
+      Gauge& operator-- (int) {
+        --value;
+        return *this;
+      }
+
+      Gauge& operator+=(const Value& val) {
+        value += val;
+        return *this;
+      }
+
+      Gauge& operator-=(const Value& val) {
+        value -= val;
+        return *this;
+      }
+
   };
-
-  template <typename Value = uint64_t>
-  using GaugeFamily = CustomFamily<Gauge<Value>>;
-
 
 }  // namespace prometheus
