@@ -27,12 +27,12 @@ namespace prometheus {
     std::atomic<Value> value { 0 };
 
     public:
-
+      using value_type = Value;
       using Family = CustomFamily<Gauge<Value>>;
 
       static const Metric::Type static_type = Metric::Type::Gauge;
 
-      
+
       Gauge()                   : Metric (static_type) {}                  ///< \brief Create a gauge that starts at 0.
       Gauge(const Value value_) : Metric(static_type), value{ value_ } {}  ///< \brief Create a gauge that starts at the given amount.
 
@@ -40,7 +40,7 @@ namespace prometheus {
 
       void Increment() { ++value; }                      ///< \brief Increment the gauge by 1.
       void Increment(const Value& val) { value += val; } ///< \brief Increment the gauge by the given amount.
-      
+
       void Decrement() { --value; }                      ///< \brief Decrement the gauge by 1.
       void Decrement(const Value& val) { value -= val; } ///< \brief Decrement the gauge by the given amount.
 

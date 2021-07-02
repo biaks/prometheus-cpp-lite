@@ -29,13 +29,13 @@ namespace prometheus {
     std::atomic<Value> value { 0 };
 
   public:
-
+    using value_type = Value;
     using Family = CustomFamily<Counter<Value>>;
 
     static const Metric::Type static_type = Metric::Type::Counter;
-  
+
     Counter() : Metric (Metric::Type::Counter) {}  ///< \brief Create a counter that starts at 0.
- 
+
     // original API
 
     void Increment() { ///< \brief Increment the counter by 1.
@@ -43,13 +43,13 @@ namespace prometheus {
     }
 
     void Increment(const Value& val) { ///< \brief Increment the counter by a given amount. The counter will not change if the given amount is negative.
-      if (val > 0)                    
+      if (val > 0)
         value += val;
     }
 
     Value& Get() const { ///< \brief Get the current value of the counter.
       return value;
-    } 
+    }
 
     virtual ClientMetric Collect() const { ///< /// \brief Get the current value of the counter. Collect is called by the Registry when collecting metrics.
       ClientMetric metric;
