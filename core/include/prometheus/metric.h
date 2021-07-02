@@ -20,6 +20,7 @@ namespace prometheus {
       Type type;
 
       Metric (Type type_) : type(type_) {}
+      virtual ~Metric() = default;
 
       virtual ClientMetric Collect() const = 0;
 

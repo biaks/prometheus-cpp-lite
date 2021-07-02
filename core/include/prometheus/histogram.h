@@ -36,6 +36,7 @@ class Histogram : Metric {
     Gauge<Value>                sum_;
 
   public:
+    using value_type = Value;
 
     static const Metric::Type static_type = Metric::Type::Histogram;
 
