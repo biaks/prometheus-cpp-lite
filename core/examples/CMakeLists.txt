@@ -10,3 +10,6 @@ add_executable(use_counters_in_class_example
 
 add_executable(use_gauge_in_class_example
   "use_gauge_in_class_example.cpp" )
+
+  add_executable(use_benchmark_in_class_example
+  "use_benchmark_in_class_example.cpp" )
