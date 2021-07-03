@@ -20,3 +20,4 @@ To see how this can be used see the examples folders.
 - Check and debug this refactored code for Linux mashine (now I worked only in Visual Studio),
 - Move from the original project a part of the code responsible for sending metrics through libcurl to the prometheus server, refactoring it and write some examples for it too.
 
+
