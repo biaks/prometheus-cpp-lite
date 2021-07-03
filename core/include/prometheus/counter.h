@@ -47,7 +47,7 @@ namespace prometheus {
         value += val;
     }
 
-    Value& Get() const { ///< \brief Get the current value of the counter.
+    const Value& Get() const { ///< \brief Get the current value of the counter.
       return value;
     }
 

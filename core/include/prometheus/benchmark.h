@@ -9,7 +9,9 @@ namespace prometheus {
 
   class Benchmark : public Metric {
 
-    bool already_started = false;
+    #ifndef NDEBUG
+      bool already_started = false;
+    #endif
 
     std::chrono::time_point<std::chrono::high_resolution_clock>           start_;
     std::chrono::time_point<std::chrono::high_resolution_clock>::duration elapsed = std::chrono::time_point<std::chrono::high_resolution_clock>::duration::zero(); // elapsed time
@@ -24,20 +26,33 @@ namespace prometheus {
     Benchmark() : Metric(Metric::Type::Counter) {}
 
     void start() {
-      if (already_started)
-        throw std::runtime_error("try to start already started counter");
-      else
-        already_started = true;
+
+      #ifndef NDEBUG
+        if (already_started)
+          throw std::runtime_error("try to start already started counter");
+        else
+          already_started = true;
+      #endif
 
       start_ = std::chrono::high_resolution_clock::now();
 
     }
 
     void stop() {
+
+      #ifndef NDEBUG
+        if (already_started == false)
+          throw std::runtime_error("try to stop already stoped counter");
+      #endif
+
       std::chrono::time_point<std::chrono::high_resolution_clock> stop;
       stop = std::chrono::high_resolution_clock::now();
       elapsed += stop - start_;
-      already_started = false;
+
+      #ifndef NDEBUG
+        already_started = false;
+      #endif
+
     }
 
     double Get() const {
