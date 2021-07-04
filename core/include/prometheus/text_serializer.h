@@ -9,7 +9,7 @@
 
 namespace prometheus {
 
-class TextSerializer : public Serializer {
+class TextSerializer {
 
   // Write a double as a string, with proper formatting for infinity and NaN
   static void WriteValue (std::ostream& out, double value) {
@@ -192,7 +192,7 @@ class TextSerializer : public Serializer {
 
   public:
 
-  virtual void Serialize (std::ostream& out, const std::vector<MetricFamily>& metrics) const {
+  static void Serialize (std::ostream& out, const std::vector<MetricFamily>& metrics) {
     std::locale saved_locale = out.getloc();
     out.imbue(std::locale::classic());
     for (auto& family : metrics) {
