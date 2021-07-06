@@ -5,7 +5,7 @@
 #include <array>
 
 #include "prometheus/metric_family.h"
-#include "prometheus/serializer.h"
+
 
 namespace prometheus {
 
