@@ -16,3 +16,4 @@ add_executable(use_benchmark_in_class_example
 
 add_executable(save_to_file_example
   "save_to_file_example.cpp" )
+

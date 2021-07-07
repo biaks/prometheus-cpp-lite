@@ -31,8 +31,13 @@ endif()
 include_directories("./core/include")
 add_subdirectory("./core/examples")
 
+include_directories("./simpleapi/include")
+add_subdirectory("./simpleapi")
+add_subdirectory("./simpleapi/examples")
+
 if(BUILD_PUSH_EXAMPLES)
   include_directories("./push/include")
   add_subdirectory("./push/examples")
 endif()
+
 
