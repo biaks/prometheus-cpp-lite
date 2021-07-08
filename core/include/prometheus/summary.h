@@ -41,6 +41,9 @@ namespace prometheus {
 
   public:
 
+    using Value  = double;
+    using Family = CustomFamily<Summary>;
+
     static const Metric::Type static_type = Metric::Type::Summary;
 
     using Quantiles = std::vector<detail::CKMSQuantiles::Quantile>;
@@ -114,7 +117,5 @@ namespace prometheus {
       return metric;
     }
   };
-
-  using SummaryFamily = CustomFamily<Summary>;
 
 } // namespace prometheus

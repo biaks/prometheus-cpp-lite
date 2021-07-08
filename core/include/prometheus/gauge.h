@@ -21,13 +21,14 @@ namespace prometheus {
   ///
   /// The class is thread-safe. No concurrent call to any API of this type causes
   /// a data race.
-  template <typename Value = uint64_t>
+  template <typename Value_ = uint64_t>
   class Gauge : public Metric {
 
-    std::atomic<Value> value { 0 };
+    std::atomic<Value_> value { 0 };
 
     public:
-      using value_type = Value;
+
+      using Value  = Value_;
       using Family = CustomFamily<Gauge<Value>>;
 
       static const Metric::Type static_type = Metric::Type::Gauge;
