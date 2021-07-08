@@ -18,8 +18,8 @@ namespace prometheus {
 
   public:
 
-    using value_type = double;
-    using Family     = CustomFamily<Benchmark>;
+    using Value  = double;
+    using Family = CustomFamily<Benchmark>;
 
     static const Metric::Type static_type = Metric::Type::Counter;
 

@@ -5,6 +5,7 @@
 #include <prometheus/registry.h>
 #include <prometheus/counter.h>
 #include <prometheus/gauge.h>
+#include <prometheus/benchmark.h>
 
 #include "prometheus/registry.h"
 #include "prometheus/save_to_file.h"
@@ -40,7 +41,7 @@ namespace prometheus {
         , metric_(family_.Add({}))
       { }
 
-      typename CustomMetric::value_type value() const { return metric_.Get(); }
+      typename CustomMetric::Value value() const { return metric_.Get(); }
 
       void operator++()    { metric_++; }
       void operator++(int) { metric_++; }
@@ -48,15 +49,38 @@ namespace prometheus {
       void operator--()    { metric_--; }
       void operator--(int) { metric_--; }
 
-      metric_wrapper_t& operator+=(typename CustomMetric::value_type val) {
+      metric_wrapper_t& operator+=(typename CustomMetric::Value val) {
         metric_.Increment(val);
         return *this;
       }
 
-      metric_wrapper_t& operator-=(typename CustomMetric::value_type val) {
+      metric_wrapper_t& operator-=(typename CustomMetric::Value val) {
         metric_.Decrement(val);
         return *this;
       }
+
+    };
+
+    class benchmark_wrapper_t {
+
+      typename Benchmark::Family& family_;
+      Benchmark&                  metric_;
+
+      friend family_wrapper_t<Benchmark>;
+
+      benchmark_wrapper_t(Benchmark& cm, typename Benchmark::Family& family)
+        : family_(family), metric_(cm) {}
+
+    public:
+      benchmark_wrapper_t(const std::string& name, const std::string& description)
+        : family_(Benchmark::Family::Build(registry, name, description))
+        , metric_(family_.Add({}))
+      { }
+
+      typename Benchmark::Value value() const { return metric_.Get(); }
+
+      void start() { metric_.start(); }
+      void stop()  { metric_.stop();  }
 
     };
 
@@ -85,6 +109,9 @@ namespace prometheus {
 
     using gauge_family_t = family_wrapper_t<prometheus::Gauge<int64_t>>;
     using gauge_metric_t = metric_wrapper_t<prometheus::Gauge<int64_t>>;
+
+    using benchmark_family_t = family_wrapper_t<prometheus::Benchmark>;
+    using benchmark_metric_t = benchmark_wrapper_t;
 
   }
 }

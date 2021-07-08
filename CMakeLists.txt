@@ -1,8 +1,6 @@
 
-project(prometheus-cpp-light-examples)
+project(prometheus-cpp-lite)
 cmake_minimum_required(VERSION 2.6)
-
-option(BUILD_PUSH_EXAMPLES "Build push examples" OFF)
 
 if(WIN32) 
 
@@ -28,16 +26,11 @@ else() # not WIN32
 
 endif()
 
-include_directories("./core/include")
-add_subdirectory("./core/examples")
+add_subdirectory("./core")
 
-include_directories("./simpleapi/include")
 add_subdirectory("./simpleapi")
-add_subdirectory("./simpleapi/examples")
 
-if(BUILD_PUSH_EXAMPLES)
-  include_directories("./push/include")
-  add_subdirectory("./push/examples")
-endif()
+add_subdirectory("./examples")
+
 
 

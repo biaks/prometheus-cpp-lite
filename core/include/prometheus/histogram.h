@@ -26,17 +26,18 @@ namespace prometheus {
 ///
 /// The class is thread-safe. No concurrent call to any API of this type causes
 /// a data race.
-template <typename Value = uint64_t>
+template <typename Value_ = uint64_t>
 class Histogram : Metric {
 
-    using BucketBoundaries = std::vector<Value>;
+    using BucketBoundaries = std::vector<Value_>;
 
-    const BucketBoundaries      bucket_boundaries_;
-    std::vector<Counter<Value>> bucket_counts_;
-    Gauge<Value>                sum_;
+    const BucketBoundaries       bucket_boundaries_;
+    std::vector<Counter<Value_>> bucket_counts_;
+    Gauge<Value_>                sum_;
 
   public:
-    using value_type = Value;
+    using Value  = Value_;
+    using Family = CustomFamily<Histogram<Value>>;
 
     static const Metric::Type static_type = Metric::Type::Histogram;
 
@@ -119,8 +120,5 @@ class Histogram : Metric {
     }
 
 };
-
-template <typename Value = uint64_t>
-using HistogramFamily = CustomFamily<Histogram<Value>>;
 
 }  // namespace prometheus
