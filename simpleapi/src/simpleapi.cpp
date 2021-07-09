@@ -6,7 +6,7 @@ namespace prometheus {
   namespace simpleapi {
 
     Registry registry;
-    SaveToFile saver = SaveToFile(registry, std::chrono::seconds(5), std::string("./metrics.prom"));
+    SaveToFile saver(registry, std::chrono::seconds(5), std::string("./metrics.prom"));
 
   }
 }

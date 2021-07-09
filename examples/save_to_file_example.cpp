@@ -23,7 +23,7 @@ int main() {
   // @note it's the users responsibility to keep the object alive
   Registry registry;
 
-  SaveToFile saver = SaveToFile( registry, std::chrono::seconds(5), std::string("./metrics.prom") );
+  SaveToFile saver( registry, std::chrono::seconds(5), std::string("./metrics.prom") );
 
   // add a new counter family to the registry (families combine values with the
   // same name, but distinct label dimensions)
