@@ -4,6 +4,8 @@
 #include "prometheus/metric.h"
 #include "prometheus/family.h"
 
+#include "prometheus/builder.h"
+
 #include <atomic>
 #include <ctime>
 
@@ -91,5 +93,36 @@ namespace prometheus {
       }
 
   };
+
+
+  /// \brief Return a builder to configure and register a Gauge metric.
+  ///
+  /// @copydetails Family<>::Family()
+  ///
+  /// Example usage:
+  ///
+  /// \code
+  /// auto registry = std::make_shared<Registry>();
+  /// auto& gauge_family = prometheus::BuildGauge()
+  ///                          .Name("some_name")
+  ///                          .Help("Additional description.")
+  ///                          .Labels({{"key", "value"}})
+  ///                          .Register(*registry);
+  ///
+  /// ...
+  /// \endcode
+  ///
+  /// \return An object of unspecified type T, i.e., an implementation detail
+  /// except that it has the following members:
+  ///
+  /// - Name(const std::string&) to set the metric name,
+  /// - Help(const std::string&) to set an additional description.
+  /// - Label(const std::map<std::string, std::string>&) to assign a set of
+  ///   key-value pairs (= labels) to the metric.
+  ///
+  /// To finish the configuration of the Gauge metric register it with
+  /// Register(Registry&).
+  using BuildGauge = Builder<Gauge<double>>;
+
 
 }  // namespace prometheus

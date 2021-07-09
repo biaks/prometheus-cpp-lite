@@ -17,14 +17,17 @@ int main() {
 
   // create a metrics registry
   // @note it's the users responsibility to keep the object alive
-  Registry registry;
+  auto registry = std::make_shared<Registry>();
 
   // add a new counter family to the registry (families combine values with the
   // same name, but distinct label dimensions)
   //
   // @note please follow the metric-naming best-practices:
   // https://prometheus.io/docs/practices/naming/
-  auto& packet_counter = Counter<>::Family::Build(registry, "observed_packets_total", "Number of observed packets");
+  auto& packet_counter = BuildCounter()
+                             .Name("observed_packets_total")
+                             .Help("Number of observed packets")
+                             .Register(*registry);
 
   // add and remember dimensional data, incrementing those is very cheap
   auto& tcp_rx_counter = packet_counter.Add({ {"protocol", "tcp"}, {"direction", "rx"} });
@@ -35,7 +38,10 @@ int main() {
   // add a counter whose dimensional data is not known at compile time
   // nevertheless dimensional values should only occur in low cardinality:
   // https://prometheus.io/docs/practices/naming/#labels
-  auto& http_requests_counter = Counter<>::Family::Build(registry, "http_requests_total", "Number of HTTP requests");
+  auto& http_requests_counter = BuildCounter()
+                                    .Name("http_requests_total")
+                                    .Help("Number of HTTP requests")
+                                    .Register(*registry);
 
   // ask the exposer to scrape the registry on incoming HTTP requests
   //exposer.RegisterCollectable(registry);
@@ -55,7 +61,7 @@ int main() {
     http_requests_counter.Add({ {"method", method} }).Increment();
 
     TextSerializer text_serializer;
-    text_serializer.Serialize(std::cout, registry.Collect());
+    text_serializer.Serialize(std::cout, registry->Collect());
 
   }
 
