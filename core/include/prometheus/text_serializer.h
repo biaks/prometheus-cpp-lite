@@ -3,6 +3,8 @@
 #include <iosfwd>
 #include <vector>
 #include <array>
+#include <math.h>
+#include <ostream>
 
 #include "prometheus/metric_family.h"
 

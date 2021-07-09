@@ -13,7 +13,7 @@ namespace prometheus {
     std::chrono::seconds period { 1 };
     std::string          filename;
     std::thread          worker_thread { &SaveToFile::worker_function, this };
-    Registry*            registry_ptr { 0 };
+    Registry*            registry_ptr { nullptr };
 
     void worker_function() {
       for (;;) {

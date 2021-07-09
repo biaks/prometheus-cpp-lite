@@ -17,22 +17,22 @@ namespace prometheus {
   }
 
 
-  template <typename FloatingType, class = std::enable_if<std::is_floating_point<FloatingType>::value, int>::type>
+  template <typename FloatingType, class = typename std::enable_if<std::is_floating_point<FloatingType>::value, int>::type>
   inline std::atomic<FloatingType>& operator++(std::atomic<FloatingType>& value) {
     return atomic_add_for_floating_types(value, 1.0);
   }
 
-  template <typename FloatingType, class = std::enable_if<std::is_floating_point<FloatingType>::value, int>::type>
+  template <typename FloatingType, class = typename std::enable_if<std::is_floating_point<FloatingType>::value, int>::type>
   inline std::atomic<FloatingType>& operator+=(std::atomic<FloatingType>& value, const FloatingType& val) {
     return atomic_add_for_floating_types(value, val);
   }
 
-  template <typename FloatingType, class = std::enable_if<std::is_floating_point<FloatingType>::value, int>::type>
+  template <typename FloatingType, class = typename std::enable_if<std::is_floating_point<FloatingType>::value, int>::type>
   inline std::atomic<FloatingType>& operator--(std::atomic<FloatingType>& value) {
     return atomic_add_for_floating_types(value, -1.0);
   }
 
-  template <typename FloatingType, class = std::enable_if<std::is_floating_point<FloatingType>::value, int>::type>
+  template <typename FloatingType, class = typename std::enable_if<std::is_floating_point<FloatingType>::value, int>::type>
   inline std::atomic<FloatingType>& operator-=(std::atomic<FloatingType>& value, const FloatingType& val) {
     return atomic_add_for_floating_types(value, -val);
   }
