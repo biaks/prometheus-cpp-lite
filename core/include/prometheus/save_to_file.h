@@ -30,7 +30,13 @@ namespace prometheus {
     }
     
   public:
-    SaveToFile() {}
+    SaveToFile() = default;
+
+    ~SaveToFile() {
+      if (worker_thread.joinable())
+        worker_thread.detach();
+    }
+
     SaveToFile(Registry& registry_, const std::chrono::seconds& period_, const std::string& filename_) {
       set_registry(registry_);
       set_delay(period_);
