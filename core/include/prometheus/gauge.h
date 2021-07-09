@@ -54,7 +54,7 @@ namespace prometheus {
 
       virtual ClientMetric Collect() const {             ///< \brief Get the current value of the gauge. Collect is called by the Registry when collecting metrics.
         ClientMetric metric;
-        metric.gauge.value = Get();
+        metric.gauge.value = static_cast<double>(value);
         return metric;
       }
 
