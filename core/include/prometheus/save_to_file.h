@@ -13,7 +13,7 @@ namespace prometheus {
     std::chrono::seconds period { 1 };
     std::string          filename;
     std::thread          worker_thread { &SaveToFile::worker_function, this };
-    Registry*            registry_ptr { 0 };
+    Registry*            registry_ptr { nullptr };
 
     void worker_function() {
       for (;;) {
@@ -30,7 +30,13 @@ namespace prometheus {
     }
     
   public:
-    SaveToFile() {}
+    SaveToFile() = default;
+
+    ~SaveToFile() {
+      if (worker_thread.joinable())
+        worker_thread.detach();
+    }
+
     SaveToFile(Registry& registry_, const std::chrono::seconds& period_, const std::string& filename_) {
       set_registry(registry_);
       set_delay(period_);
