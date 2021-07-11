@@ -21,97 +21,135 @@ namespace prometheus {
     extern Registry   registry;
     extern SaveToFile saver;
 
-    template <typename CustomMetric>
-    class family_wrapper_t;
 
-    template <typename CustomMetric>
-    class metric_wrapper_t {
-
-      typename CustomMetric::Family& family_;
-      CustomMetric&                  metric_;
-
-      friend family_wrapper_t<CustomMetric>;
-
-      metric_wrapper_t(CustomMetric& cm, typename CustomMetric::Family& family)
-        : family_(family), metric_(cm) {}
-
-    public:
-      metric_wrapper_t(const std::string& name, const std::string& description)
-        : family_(CustomMetric::Family::Build(registry, name, description))
-        , metric_(family_.Add({}))
-      { }
-
-      typename CustomMetric::Value value() const { return metric_.Get(); }
-
-      void operator++()    { metric_++; }
-      void operator++(int) { metric_++; }
-
-      void operator--()    { metric_--; }
-      void operator--(int) { metric_--; }
-
-      metric_wrapper_t& operator+=(typename CustomMetric::Value val) {
-        metric_.Increment(val);
-        return *this;
-      }
-
-      metric_wrapper_t& operator-=(typename CustomMetric::Value val) {
-        metric_.Decrement(val);
-        return *this;
-      }
-
-    };
-
-    class benchmark_wrapper_t {
-
-      typename Benchmark::Family& family_;
-      Benchmark&                  metric_;
-
-      friend family_wrapper_t<Benchmark>;
-
-      benchmark_wrapper_t(Benchmark& cm, typename Benchmark::Family& family)
-        : family_(family), metric_(cm) {}
-
-    public:
-      benchmark_wrapper_t(const std::string& name, const std::string& description)
-        : family_(Benchmark::Family::Build(registry, name, description))
-        , metric_(family_.Add({}))
-      { }
-
-      typename Benchmark::Value value() const { return metric_.Get(); }
-
-      void start() { metric_.start(); }
-      void stop()  { metric_.stop();  }
-
-    };
-
-    template <typename CustomMetric>
+    template <typename CustomWrapper>
     class family_wrapper_t {
 
-      typename CustomMetric::Family& family_;
+      typename CustomWrapper::Family* family_{ nullptr };
 
     public:
+
+      // make new family: family_t family {"family_name", "Family description"}
       family_wrapper_t(const std::string& name, const std::string& description)
-        : family_(CustomMetric::Family::Build(registry, name, description))
-      { }
+        : family_(&CustomWrapper::Family::Build(registry, name, description)) {}
 
-      metric_wrapper_t<CustomMetric> Add(const typename CustomMetric::Family::Labels& labels) {
-        return metric_wrapper_t<CustomMetric>(family_.Add(labels), family_);
+      // make new metric into existing family: metric_t metric {family.Add({{"tag_name", "tag_value"}})}
+      CustomWrapper Add(const typename CustomWrapper::Family::Labels& labels) {
+        return CustomWrapper(family_, family_->Add(labels));
       }
 
-      metric_wrapper_t<CustomMetric> Add() {
-        return metric_wrapper_t<CustomMetric>(family_.Add({}), family_);
-      }
     };
 
 
-    using counter_family_t = family_wrapper_t<prometheus::Counter<uint64_t>>;
-    using counter_metric_t = metric_wrapper_t<prometheus::Counter<uint64_t>>;
+    class counter_metric_t {
 
-    using gauge_family_t = family_wrapper_t<prometheus::Gauge<int64_t>>;
-    using gauge_metric_t = metric_wrapper_t<prometheus::Gauge<int64_t>>;
+    public:
 
-    using benchmark_family_t = family_wrapper_t<prometheus::Benchmark>;
-    using benchmark_metric_t = benchmark_wrapper_t;
+      using Metric = Counter<uint64_t>;
+      using Family = Metric::Family;
+
+    private:
+
+      Family*  family_ { nullptr };
+      Metric*  metric_ { nullptr };
+
+      friend family_wrapper_t<counter_metric_t>;
+      counter_metric_t(typename Metric::Family* family, Metric& metric)
+        : family_(family), metric_(&metric) {}
+
+    public:
+
+      // fake empty metric
+      counter_metric_t() = default;
+
+      // make new counter as simple metric without tags and with hidden family included: metric_t metric {"counter_name", "Counter description"}
+      counter_metric_t(const std::string& name, const std::string& description)
+        : family_(&Metric::Family::Build(registry, name, description)), metric_(&family_->Add({})) {}
+
+      void operator++ ()                           { metric_->Increment();    }
+      void operator++ (int)                        { metric_->Increment();    }
+      void operator+= (typename Metric::Value val) { metric_->Increment(val); }
+
+      uint64_t value() const { return metric_->Get(); }
+
+    };
+
+    using counter_family_t = family_wrapper_t<counter_metric_t>;
+
+
+    class gauge_metric_t {
+
+    public:
+
+      using Metric = Gauge<int64_t>;
+      using Family = Metric::Family;
+
+    private:
+
+      Family*  family_ { nullptr };
+      Metric*  metric_ { nullptr };
+
+      friend family_wrapper_t<gauge_metric_t>;
+      gauge_metric_t(typename Metric::Family* family, Metric& metric)
+        : family_(family), metric_(&metric) {}
+
+    public:
+
+      // fake empty metric
+      gauge_metric_t() = default;
+
+      // make new gauge as simple metric without tags and with hidden family included: metric {"counter_name", "Counter description"}
+      gauge_metric_t(const std::string& name, const std::string& description)
+        : family_(&Metric::Family::Build(registry, name, description)), metric_(&family_->Add({})) {}
+
+      void operator++ ()                           { metric_->Increment();    }
+      void operator++ (int)                        { metric_->Increment();    }
+      void operator+= (typename Metric::Value val) { metric_->Increment(val); }
+
+      void operator-- ()                           { metric_->Decrement();    }
+      void operator-- (int)                        { metric_->Decrement();    }
+      void operator-= (typename Metric::Value val) { metric_->Decrement(val); }
+
+      int64_t value() const { return metric_->Get(); }
+
+    };
+
+    using gauge_family_t = family_wrapper_t<gauge_metric_t>;
+
+
+    class benchmark_metric_t {
+
+    public:
+
+      using Metric = Benchmark;
+      using Family = Metric::Family;
+
+    private:
+
+      Family*  family_ { nullptr };
+      Metric*  metric_ { nullptr };
+
+      friend family_wrapper_t<benchmark_metric_t>;
+      benchmark_metric_t(typename Metric::Family* family, Metric& metric)
+        : family_(family), metric_(&metric) {}
+
+    public:
+
+      // fake empty metric
+      benchmark_metric_t() = default;
+
+      // make new benchmark as simple metric without tags and with hidden family included: metric {"counter_name", "Counter description"}
+      benchmark_metric_t(const std::string& name, const std::string& description)
+        : family_(&Metric::Family::Build(registry, name, description)), metric_(&family_->Add({})) {}
+
+      void start() { metric_->start(); }
+      void stop()  { metric_->stop();  }
+
+      double value() const { return metric_->Get(); }
+
+    };
+
+    using benchmark_family_t = family_wrapper_t<benchmark_metric_t>;
 
   }
 }

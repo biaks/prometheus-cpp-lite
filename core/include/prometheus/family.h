@@ -239,11 +239,11 @@ namespace prometheus {
 
           ClientMetric collected = metric_pair.second->Collect();
           for (const Label& constant_label : constant_labels)
-            collected.label.push_back(std::move(ClientMetric::Label(constant_label.first, constant_label.second)));
+            collected.label.emplace_back(ClientMetric::Label(constant_label.first, constant_label.second));
 
           const Labels& metric_labels = labels.at(metric_pair.first);
           for (const Label& metric_label : metric_labels)
-            collected.label.push_back(std::move(ClientMetric::Label(metric_label.first, metric_label.second)));
+            collected.label.emplace_back(ClientMetric::Label(metric_label.first, metric_label.second));
 
           family.metric.push_back(std::move(collected));
 
@@ -346,7 +346,7 @@ namespace prometheus {
       /// Register(Registry&).
       template <typename Registry>
       static CustomFamily& Build(Registry& registry, const std::string& name, const std::string& help, const Family::Labels& labels = Family::Labels()) {
-        return registry.Add<CustomFamily>(name, help, labels);
+        return registry.template Add<CustomFamily>(name, help, labels);
       }
 
   };

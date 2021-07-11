@@ -53,7 +53,7 @@ int main() {
     if (random_value & 8) udp_tx_counter += 0.7;
 
     const std::array<std::string, 4> methods = { "GET", "PUT", "POST", "HEAD" };
-    const std::string& method = methods.at(random_value % methods.size());
+    const std::string& method = methods.at(static_cast<std::size_t>(random_value) % methods.size());
 
     // dynamically calling Family<T>.Add() works but is slow and should be avoided
     http_requests_counter.Add({ {"method", method} }) += 10;
@@ -62,7 +62,4 @@ int main() {
     text_serializer.Serialize(std::cout, registry.Collect());
 
   }
-
-  return 0;
-
 }
