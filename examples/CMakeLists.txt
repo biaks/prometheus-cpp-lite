@@ -18,5 +18,8 @@ add_executable       (save_to_file_example           "save_to_file_example.cpp" 
 target_link_libraries(save_to_file_example           prometheus-cpp-lite-core)
 
 
-add_executable       (simpleapi_example              "simpleapi_use_in_class_example.cpp")
+add_executable       (simpleapi_example              "simpleapi_example.cpp")
 target_link_libraries(simpleapi_example              prometheus-cpp-simpleapi)
+
+add_executable       (simpleapi_use_in_class_example "simpleapi_use_in_class_example.cpp")
+target_link_libraries(simpleapi_use_in_class_example prometheus-cpp-simpleapi)

@@ -15,17 +15,21 @@ namespace prometheus {
     std::thread          worker_thread { &SaveToFile::worker_function, this };
     Registry*            registry_ptr { nullptr };
 
+    void save_data() {
+      if (registry_ptr) {
+        std::fstream out_file_stream;
+        out_file_stream.open(filename, std::fstream::out | std::fstream::binary);
+        if (out_file_stream.is_open()) {
+          TextSerializer::Serialize(out_file_stream, registry_ptr->Collect());
+          out_file_stream.close();
+        }
+      }
+    }
+
     void worker_function() {
       for (;;) {
         std::this_thread::sleep_for(period);
-        if (registry_ptr) {
-          std::fstream out_file_stream;
-          out_file_stream.open(filename, std::fstream::out | std::fstream::binary);
-          if (out_file_stream.is_open()) {
-            TextSerializer::Serialize(out_file_stream, registry_ptr->Collect());
-            out_file_stream.close();
-          }
-        }
+        save_data();
       }
     }
     
@@ -35,6 +39,8 @@ namespace prometheus {
     ~SaveToFile() {
       if (worker_thread.joinable())
         worker_thread.detach();
+      // save last data before finish
+      save_data();
     }
 
     SaveToFile(Registry& registry_, const std::chrono::seconds& period_, const std::string& filename_) {
