@@ -40,7 +40,4 @@ int main() {
     const int random_value = std::rand();
     metric += random_value % 10;
   }
-
-  return 0;
-
 }
