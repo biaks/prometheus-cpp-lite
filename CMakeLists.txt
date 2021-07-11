@@ -2,7 +2,9 @@
 project(prometheus-cpp-lite)
 cmake_minimum_required(VERSION 2.6)
 
-if(WIN32) 
+option(PROMETHEUS_BUILD_EXAMPLES "Build with examples" OFF)
+
+if(WIN32)
 
   # This properties specifies the directories into which targets files should be built
   set(EXECUTABLE_OUTPUT_PATH         ${PROJECT_SOURCE_DIR}/bin) # Set old executable location variable
@@ -30,7 +32,8 @@ add_subdirectory("./core")
 
 add_subdirectory("./simpleapi")
 
-add_subdirectory("./examples")
-
+if(PROMETHEUS_BUILD_EXAMPLES)
+  add_subdirectory("./examples")
+endif()
 
 
