@@ -21,7 +21,7 @@ using IntegerCounterFamily  = CustomFamily<IntegerCounter>;
 using FloatingCounterFamily = CustomFamily<FloatingCounter>;
 
 // create global registry for use it from our classes
-Registry globalRegistry;
+static Registry globalRegistry;
 
 class MyClass {
 
@@ -75,7 +75,5 @@ int main() {
     text_serializer.Serialize(std::cout, globalRegistry.Collect());
 
   }
-
-  return 0;
 }
 

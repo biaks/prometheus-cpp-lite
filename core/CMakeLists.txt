@@ -10,3 +10,8 @@ target_include_directories(${PROJECT_NAME}     INTERFACE ${CMAKE_CURRENT_SOURCE_
 add_custom_target         (${PROJECT_NAME}-ide SOURCES   ${PROMETHEUS_CPP_LITE_HEADERS})
 
 set                       (${PROJECT_NAME}_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include PARENT_SCOPE)
+
+if(NOT WIN32)
+  find_package(Threads)
+  target_link_libraries(${PROJECT_NAME} INTERFACE ${CMAKE_THREAD_LIBS_INIT})
+endif()

@@ -1,3 +1,6 @@
 .vs
 bin/
 out/
+build/
+
+*.user
