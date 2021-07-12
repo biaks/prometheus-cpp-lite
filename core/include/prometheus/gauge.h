@@ -52,7 +52,7 @@ namespace prometheus {
         value = static_cast<Value>(time);
       }
       void Set(const Value& val) { value = val; }        ///< \brief Set the gauge to the given value.
-      const Value& Get() const { return value; }         ///< \brief Get the current value of the gauge.
+      const Value Get() const { return value; }          ///< \brief Get the current value of the gauge.
 
       virtual ClientMetric Collect() const {             ///< \brief Get the current value of the gauge. Collect is called by the Registry when collecting metrics.
         ClientMetric metric;
