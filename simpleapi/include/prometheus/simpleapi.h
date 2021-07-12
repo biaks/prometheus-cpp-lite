@@ -70,6 +70,8 @@ namespace prometheus {
       void operator++ (int)                        { metric_->Increment();    }
       void operator+= (typename Metric::Value val) { metric_->Increment(val); }
 
+      uint64_t value() const { return metric_->Get(); }
+
     };
 
     using counter_family_t = family_wrapper_t<counter_metric_t>;
@@ -107,6 +109,8 @@ namespace prometheus {
       void operator-- ()                           { metric_->Decrement();    }
       void operator-- (int)                        { metric_->Decrement();    }
       void operator-= (typename Metric::Value val) { metric_->Decrement(val); }
+
+      int64_t value() const { return metric_->Get(); }
 
     };
 
