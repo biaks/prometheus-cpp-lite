@@ -145,6 +145,8 @@ namespace prometheus {
       void start() { metric_->start(); }
       void stop()  { metric_->stop();  }
 
+      double value() const { return metric_->Get(); }
+
     };
 
     using benchmark_family_t = family_wrapper_t<benchmark_metric_t>;
