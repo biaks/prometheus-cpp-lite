@@ -4,16 +4,18 @@
 #include <chrono>
 #include <string>
 #include <fstream>
+#include <memory>
 
 #include "registry.h"
 #include "text_serializer.h"
 
 namespace prometheus {
   class SaveToFile {
-    std::chrono::seconds period { 1 };
-    std::string          filename;
-    std::thread          worker_thread { &SaveToFile::worker_function, this };
-    Registry*            registry_ptr { nullptr };
+    std::chrono::seconds      period        { 1 };
+    std::string               filename;
+    std::thread               worker_thread { &SaveToFile::worker_function, this };
+    std::shared_ptr<Registry> registry_ptr  { nullptr };
+    bool                      must_die      { false };
 
     void save_data() {
       if (registry_ptr) {
@@ -27,9 +29,21 @@ namespace prometheus {
     }
 
     void worker_function() {
+      // it need for fast shutdown this thread when SaveToFile destructor is called
+      const uint64_t divider = 100;
+      uint64_t fraction = divider;
       for (;;) {
-        std::this_thread::sleep_for(period);
-        save_data();
+        std::chrono::milliseconds period_ms
+          = std::chrono::duration_cast<std::chrono::milliseconds>(period);
+        std::this_thread::sleep_for( period_ms / divider );
+        if (must_die) {
+          save_data();
+          return;
+        }
+        if (--fraction == 0) {
+          fraction = divider;
+          save_data();
+        }
       }
     }
     
@@ -37,13 +51,11 @@ namespace prometheus {
     SaveToFile() = default;
 
     ~SaveToFile() {
-      if (worker_thread.joinable())
-        worker_thread.detach();
-      // save last data before finish
-      save_data();
+      must_die = true;
+      worker_thread.join();
     }
 
-    SaveToFile(Registry& registry_, const std::chrono::seconds& period_, const std::string& filename_) {
+    SaveToFile(std::shared_ptr<Registry>& registry_, const std::chrono::seconds& period_, const std::string& filename_) {
       set_registry(registry_);
       set_delay(period_);
       set_out_file(filename_);
@@ -63,8 +75,8 @@ namespace prometheus {
       return open_success;
     }
 
-    void set_registry (Registry& new_registry) {
-      registry_ptr = &new_registry;
+    void set_registry (std::shared_ptr<Registry>& new_registry_ptr) {
+      registry_ptr = new_registry_ptr;
     }
 
   };

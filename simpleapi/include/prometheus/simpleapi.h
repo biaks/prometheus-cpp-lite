@@ -18,7 +18,7 @@
 namespace prometheus {
   namespace simpleapi {
 
-    extern Registry   registry;
+    extern Registry&  registry;
     extern SaveToFile saver;
 
 
