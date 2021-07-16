@@ -17,8 +17,6 @@
 #include <utility>
 
 
-using namespace jdl;
-
 namespace prometheus {
 
   class  Gateway {
@@ -121,8 +119,8 @@ namespace prometheus {
       /* Stub function. The implementation will be later, after connecting the
        * additional library of HTTP requests. */
 
-      URI uri(uri_str);
-      HTTPResponse response = HTTPClient::request(HTTPClient::POST, uri, body);
+      jdl::URI uri(uri_str);
+      jdl::HTTPResponse response = jdl::HTTPClient::request(jdl::HTTPClient::POST, uri, body);
 
       return std::stoi(response.response);
     }

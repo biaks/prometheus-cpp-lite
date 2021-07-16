@@ -27,6 +27,8 @@
  */
 
 
+#pragma once
+
 #if defined (__linux__)
 # define PLATFORM_LINUX
 #elif defined (_WIN32) || defined (_WIN64)
@@ -75,7 +77,6 @@ const std::string content_type = "Content-Type: text/plain; version=0.0.4; chars
 
 
 
-using namespace std;
 
 namespace jdl {
 
@@ -95,11 +96,11 @@ namespace jdl {
 
   class tokenizer {
   public:
-    inline tokenizer(string &str) : str(str), position(0){}
+    inline tokenizer(std::string &str) : str(str), position(0){}
 
-    inline string next(string search, bool returnTail = false) {
+    inline std::string next(std::string search, bool returnTail = false) {
       size_t hit = str.find(search, position);
-      if (hit == string::npos) {
+      if (hit == std::string::npos) {
         if (returnTail) {
           return tail();
         } else {
@@ -113,34 +114,34 @@ namespace jdl {
       return str.substr(oldPosition, hit - oldPosition);
     }
 
-    inline string tail() {
+    inline std::string tail() {
       size_t oldPosition = position;
       position = str.length();
       return str.substr(oldPosition);
     }
 
   private:
-    string str;
-    size_t position;
+    std::string str;
+    std::size_t position;
   };
 
-  typedef map<string, string> stringMap;
+  typedef std::map<std::string, std::string> stringMap;
 
   struct URI {
     inline void parseParameters() {
       tokenizer qt(querystring);
       do {
-        string key = qt.next("=");
+        std::string key = qt.next("=");
         if (key == "")
           break;
         parameters[key] = qt.next("&", true);
       } while (true);
     }
 
-    inline URI(string input, bool shouldParseParameters = false) {
+    inline URI(std::string input, bool shouldParseParameters = false) {
       tokenizer t = tokenizer(input);
       protocol = t.next("://");
-      string hostPortString = t.next("/");
+      std::string hostPortString = t.next("/");
 
       tokenizer hostPort(hostPortString);
 
@@ -163,19 +164,19 @@ namespace jdl {
       }
     }
 
-    string protocol, host, port, address, querystring, hash;
+    std::string protocol, host, port, address, querystring, hash;
     stringMap parameters;
   };
 
   struct HTTPResponse {
     bool success;
-    string protocol;
-    string response;
-    string responseString;
+    std::string protocol;
+    std::string response;
+    std::string responseString;
 
     stringMap header;
 
-    string body;
+    std::string body;
 
     inline HTTPResponse() : success(true){}
     inline static HTTPResponse fail() {
@@ -244,10 +245,10 @@ namespace jdl {
       return fd;
     }
 
-    inline static string bufferedRead(int fd) {
+    inline static std::string bufferedRead(int fd) {
       size_t initial_factor = 4, buffer_increment_size = 8192, buffer_size = 0,
              bytes_read = 0;
-      string buffer;
+      std::string buffer;
 
       buffer.resize(initial_factor * buffer_increment_size);
 
@@ -284,17 +285,17 @@ namespace jdl {
   //                     "Accept: */*" HTTP_NEWLINE
   //                     "Connection: close" HTTP_NEWLINE HTTP_NEWLINE;
 
-      string request = string(method2string(method)) + string(" /") +
-                       uri.address + ((uri.querystring == "") ? "" : "?") + uri.querystring + " HTTP/1.1" + HTTP_NEWLINE +
-                       "Host: " + uri.host + ":" + uri.port + HTTP_NEWLINE +
-                       "Accept: */*" + HTTP_NEWLINE +
-                       content_type + HTTP_NEWLINE +
-                       "Content-Length: " + std::to_string(body.size()) + HTTP_NEWLINE + HTTP_NEWLINE +
-                       body;
+      std::string request = std::string(method2string(method)) + std::string(" /") +
+                            uri.address + ((uri.querystring == "") ? "" : "?") + uri.querystring + " HTTP/1.1" + HTTP_NEWLINE +
+                            "Host: " + uri.host + ":" + uri.port + HTTP_NEWLINE +
+                            "Accept: */*" + HTTP_NEWLINE +
+                            content_type + HTTP_NEWLINE +
+                            "Content-Length: " + std::to_string(body.size()) + HTTP_NEWLINE + HTTP_NEWLINE +
+                            body;
 
       /*int bytes_written = */send(fd, request.c_str(), request.size(), 0);
 
-      string buffer = bufferedRead(fd);
+      std::string buffer = bufferedRead(fd);
 
       close(fd);
 
@@ -306,21 +307,21 @@ namespace jdl {
       result.response = bt.next(HTTP_SPACE);
       result.responseString = bt.next(HTTP_NEWLINE);
 
-      string header = bt.next(HTTP_NEWLINE HTTP_NEWLINE);
+      std::string header = bt.next(HTTP_NEWLINE HTTP_NEWLINE);
 
       result.body = bt.tail();
 
       tokenizer ht(header);
 
       do {
-        string key = ht.next(HTTP_HEADER_SEPARATOR);
+        std::string key = ht.next(HTTP_HEADER_SEPARATOR);
         if (key == "")
           break;
         result.header[key] = ht.next(HTTP_NEWLINE, true);
       } while (true);
 
       return result;
-    };
+    }
   };
 
 } /* jdl:: */

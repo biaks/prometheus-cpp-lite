@@ -18,10 +18,6 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options(-Wall -Werror -Wextra -Wpedantic -g -O0)
 
-if(NOT CMAKE_CXX_EXTENSIONS)
-  set(CMAKE_CXX_EXTENSIONS OFF)
-endif()
-
 
 option(HTTP_CLIENT_LITE_OPT_BUILD_EXAMPLES "Build examples" OFF )
 

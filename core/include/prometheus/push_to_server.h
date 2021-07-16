@@ -10,8 +10,6 @@
 #include <jdl/httpclientlite.h>
 
 
-using namespace jdl;
-
 namespace prometheus {
   class PushToServer {
     std::chrono::seconds      period { 1 };
@@ -27,7 +25,7 @@ namespace prometheus {
           TextSerializer::Serialize(body_strm, registry_ptr->Collect());
 
           std::string body = body_strm.str();
-          HTTPResponse response = HTTPClient::request(HTTPClient::POST, URI(uri), body);
+          jdl::HTTPResponse response = jdl::HTTPClient::request(jdl::HTTPClient::POST, jdl::URI(uri), body);
         }
       }
     }
@@ -56,13 +54,13 @@ namespace prometheus {
 
   public:
     PushToServer() {
-      init_socket();
+      jdl::init_socket();
     }
 
     ~PushToServer() {
       must_die = true;
       worker_thread.join();
-      deinit_socket();
+      jdl::deinit_socket();
     }
 
     PushToServer(std::shared_ptr<Registry>& registry_, const std::chrono::seconds& period_, const std::string& uri_) {
