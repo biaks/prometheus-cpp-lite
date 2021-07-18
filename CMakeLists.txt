@@ -32,6 +32,8 @@ add_subdirectory("./core")
 
 add_subdirectory("./simpleapi")
 
+add_subdirectory("./3rdpatry/http-client-lite")
+
 if(PROMETHEUS_BUILD_EXAMPLES)
   add_subdirectory("./examples")
 endif()

@@ -21,16 +21,16 @@ int main() {
 
   // create a metrics registry
   // @note it's the users responsibility to keep the object alive
-  Registry registry;
+  std::shared_ptr<Registry> registry_ptr = std::make_shared<Registry>();
 
-  SaveToFile saver( registry, std::chrono::seconds(5), std::string("./metrics.prom") );
+  SaveToFile saver( registry_ptr, std::chrono::seconds(5), "./metrics.prom" );
 
   // add a new counter family to the registry (families combine values with the
   // same name, but distinct label dimensions)
   //
   // @note please follow the metric-naming best-practices:
   // https://prometheus.io/docs/practices/naming/
-  Family& family { Family::Build(registry, "our_metric", "some metric") };
+  Family& family { Family::Build(*registry_ptr, "our_metric", "some metric") };
 
   // add and remember dimensional data, incrementing those is very cheap
   Metric& metric { family.Add({}) };

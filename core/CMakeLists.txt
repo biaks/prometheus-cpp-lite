@@ -8,6 +8,7 @@ add_library               (${PROJECT_NAME}     INTERFACE)
 target_sources            (${PROJECT_NAME}     INTERFACE ${PROMETHEUS_CPP_LITE_HEADERS})
 target_include_directories(${PROJECT_NAME}     INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_custom_target         (${PROJECT_NAME}-ide SOURCES   ${PROMETHEUS_CPP_LITE_HEADERS})
+target_link_libraries     (${PROJECT_NAME}     INTERFACE http-client-lite)
 
 set                       (${PROJECT_NAME}_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include PARENT_SCOPE)
 
