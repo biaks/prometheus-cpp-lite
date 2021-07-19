@@ -1,6 +1,6 @@
 
 project(prometheus-cpp-lite-core)
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.2)
 
 file(GLOB_RECURSE PROMETHEUS_CPP_LITE_HEADERS *.h)
 
