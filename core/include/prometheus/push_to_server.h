@@ -25,7 +25,7 @@ namespace prometheus {
           TextSerializer::Serialize(body_strm, registry_ptr->Collect());
 
           std::string body = body_strm.str();
-          jdl::HTTPResponse response = jdl::HTTPClient::request(jdl::HTTPClient::POST, jdl::URI(uri), body);
+          jdl::HTTPResponse response = jdl::HTTPClient::request(jdl::HTTPClient::m_post, jdl::URI(uri), body);
         }
       }
     }

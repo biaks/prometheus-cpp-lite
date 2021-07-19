@@ -120,7 +120,7 @@ namespace prometheus {
        * additional library of HTTP requests. */
 
       jdl::URI uri(uri_str);
-      jdl::HTTPResponse response = jdl::HTTPClient::request(jdl::HTTPClient::POST, uri, body);
+      jdl::HTTPResponse response = jdl::HTTPClient::request(jdl::HTTPClient::m_post, uri, body);
 
       return std::stoi(response.response);
     }

@@ -188,14 +188,14 @@ namespace jdl {
 
   struct HTTPClient {
     typedef enum {
-      OPTIONS = 0,
-      GET,
-      HEAD,
-      POST,
-      PUT,
-      DELETE,
-      TRACE,
-      CONNECT
+      m_options = 0,
+      m_get,
+      m_head,
+      m_post,
+      m_put,
+      m_delete,
+      m_trace,
+      m_connect
     } HTTPMethod;
 
     inline static const char *method2string(HTTPMethod method) {
@@ -204,7 +204,7 @@ namespace jdl {
       return methods[method];
     }
 
-    inline static int connectToURI(const URI& uri) {
+    inline static socktype_t connectToURI(const URI& uri) {
       struct addrinfo hints, *result, *rp;
 
       memset(&hints, 0, sizeof(addrinfo));
@@ -228,7 +228,7 @@ namespace jdl {
           continue;
         }
 
-        int connect_result = connect(fd, rp->ai_addr, rp->ai_addrlen);
+        int connect_result = connect(fd, rp->ai_addr, static_cast<socklen_t>(rp->ai_addrlen));
 
         if (connect_result == -1) {
           // successfully created a socket, but connection failed. close it!
@@ -245,7 +245,7 @@ namespace jdl {
       return fd;
     }
 
-    inline static std::string bufferedRead(int fd) {
+    inline static std::string bufferedRead(socktype_t fd) {
       size_t initial_factor = 4, buffer_increment_size = 8192, buffer_size = 0,
              bytes_read = 0;
       std::string buffer;
@@ -253,8 +253,8 @@ namespace jdl {
       buffer.resize(initial_factor * buffer_increment_size);
 
   //    do {
-        bytes_read = recv(fd, ((char *)buffer.c_str()) + buffer_size,
-                          buffer.size() - buffer_size, 0);
+        bytes_read = recv(fd, ((char*)buffer.c_str()) + buffer_size,
+                          static_cast<socklen_t>(buffer.size() - buffer_size), 0);
 
         buffer_size += bytes_read;
 
@@ -274,7 +274,7 @@ namespace jdl {
 
     inline static HTTPResponse request(HTTPMethod method, const URI& uri, const std::string& body = "") {
 
-      int fd = connectToURI(uri);
+      socktype_t fd = connectToURI(uri);
       if (fd < 0)
         return HTTPResponse::fail();
 
@@ -293,11 +293,11 @@ namespace jdl {
                             "Content-Length: " + std::to_string(body.size()) + HTTP_NEWLINE + HTTP_NEWLINE +
                             body;
 
-      /*int bytes_written = */send(fd, request.c_str(), request.size(), 0);
+      /*int bytes_written = */send(fd, request.c_str(), static_cast<socklen_t>(request.size()), 0);
 
       std::string buffer = bufferedRead(fd);
 
-      close(fd);
+      closesocket(fd);
 
       HTTPResponse result;
 
