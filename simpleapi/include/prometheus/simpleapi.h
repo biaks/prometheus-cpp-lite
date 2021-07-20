@@ -7,8 +7,8 @@
 #include <prometheus/gauge.h>
 #include <prometheus/benchmark.h>
 
-#include "prometheus/registry.h"
-#include "prometheus/save_to_file.h"
+#include <prometheus/registry.h>
+#include <prometheus/save_to_file.h>
 
 #include <thread>
 #include <iostream>

@@ -1,8 +1,5 @@
 #include "prometheus/simpleapi.h"
 
-#include "prometheus/registry.h"
-#include "prometheus/save_to_file.h"
-
 #include <memory>
 
 namespace prometheus {
