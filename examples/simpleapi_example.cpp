@@ -21,6 +21,6 @@ int main() {
     if (random_value & 8) metric4++;
   }
 
-  return 0;
+  //return 0;
 
 }

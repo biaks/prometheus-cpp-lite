@@ -1,14 +1,11 @@
-
 project(prometheus-cpp-lite)
 cmake_minimum_required(VERSION 3.2)
 
 option(PROMETHEUS_BUILD_EXAMPLES "Build with examples" OFF)
 
-if(WIN32)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
-  # This properties specifies the directories into which targets files should be built
-  set(EXECUTABLE_OUTPUT_PATH         ${PROJECT_SOURCE_DIR}/bin) # Set old executable location variable
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin) # Set new executable location variable. Then it can be read from RUNTIME_OUTPUT_DIRECTORY variable.
+if(WIN32) 
 
   # it prevent create Debug/ and Release folders in Visual Studio
   foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
@@ -21,10 +18,6 @@ if(WIN32)
 else() # not WIN32
 
   set (INSTALL_PATH_BIN "bin/")
-
-  set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror")
-  set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -O0 -ggdb3")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
 endif()
 

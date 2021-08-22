@@ -109,6 +109,7 @@ namespace prometheus {
       void operator-- ()                           { metric_->Decrement();    }
       void operator-- (int)                        { metric_->Decrement();    }
       void operator-= (typename Metric::Value val) { metric_->Decrement(val); }
+      void operator=  (typename Metric::Value val) { metric_->Set(val);       }
 
       int64_t value() const { return metric_->Get(); }
 
