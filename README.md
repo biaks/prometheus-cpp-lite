@@ -1,5 +1,7 @@
 # C++ Header-only Prometheus client library
 
+[![Build examples](https://github.com/biaks/prometheus-cpp-lite/actions/workflows/cmake.yml/badge.svg)](https://github.com/biaks/prometheus-cpp-lite/actions/workflows/cmake.yml)
+
 It is a tool for quickly adding metrics (and profiling) functionality to C++ projects.
 
 ## Advantages:
