@@ -27,7 +27,7 @@ namespace prometheus {
   /// The class is thread-safe. No concurrent call to any API of this type causes
   /// a data race.
   template <typename Value_ = uint64_t>
-  class Histogram : Metric {
+  class Histogram : public Metric {
 
       using BucketBoundaries = std::vector<Value_>;
 
