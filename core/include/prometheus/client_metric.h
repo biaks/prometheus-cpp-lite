@@ -3,11 +3,11 @@
 #include <cstdint>
 #include <string>
 #include <tuple>
+#include <utility>
 #include <vector>
 
 namespace prometheus {
 
-  // структура, в которую копируются значения метрик перед их сериализацией
   struct ClientMetric {
 
     // Label
@@ -17,7 +17,7 @@ namespace prometheus {
       std::string name;
       std::string value;
 
-      Label(const std::string name_, const std::string value_) : name(name_), value(value_) {}
+      Label(std::string name_, std::string value_) : name(std::move(name_)), value(std::move(value_)) {}
 
       bool operator<(const Label& rhs) const {
         return std::tie(name, value) < std::tie(rhs.name, rhs.value);

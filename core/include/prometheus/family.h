@@ -87,10 +87,10 @@ namespace prometheus {
       static bool isLocaleIndependentDigit        (char c) { return '0' <= c && c <= '9'; }
       static bool isLocaleIndependentAlphaNumeric (char c) { return isLocaleIndependentDigit(c) || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z'); }
 
-      bool nameStartsValid (const std::string& name) {
-        if (name.empty())                           return false; // must not be empty
-        if (isLocaleIndependentDigit(name.front())) return false; // must not start with a digit
-        if (name.compare(0, 2, "__") == 0)          return false; // must not start with "__"
+      bool nameStartsValid (const std::string& cur_name) {
+        if (cur_name.empty())                           return false; // must not be empty
+        if (isLocaleIndependentDigit(cur_name.front())) return false; // must not start with a digit
+        if (cur_name.compare(0, 2, "__") == 0)          return false; // must not start with "__"
         return true;
       }
 
@@ -102,12 +102,12 @@ namespace prometheus {
       ///
       /// \param name metric name
       /// \return true is valid, false otherwise
-      bool CheckMetricName (const std::string& name) {
+      bool CheckMetricName (const std::string& cur_name) {
 
-        if (!nameStartsValid(name))
+        if (!nameStartsValid(cur_name))
           return false;
 
-        for (const char& c : name)
+        for (const char& c : cur_name)
           if ( !isLocaleIndependentAlphaNumeric(c) && c != '_' && c != ':' )
             return false;
 
@@ -123,12 +123,12 @@ namespace prometheus {
       ///
       /// \param name label name
       /// \return true is valid, false otherwise
-      bool CheckLabelName (const std::string& name) {
+      bool CheckLabelName (const std::string& cur_name) {
 
-        if (!nameStartsValid(name))
+        if (!nameStartsValid(cur_name))
           return false;
 
-        for (const char& c : name)
+        for (const char& c : cur_name)
           if (!isLocaleIndependentAlphaNumeric(c) && c != '_')
             return false;
 
@@ -198,8 +198,8 @@ namespace prometheus {
       /// \brief Returns true if the dimensional data with the given labels exist
       ///
       /// \param labels A set of key-value pairs (= labels) of the dimensional data.
-      bool Has (const Labels& labels) const {
-        const Hash hash = hash_labels (labels);
+      bool Has (const Labels& cur_labels) const {
+        const Hash hash = hash_labels (cur_labels);
         std::lock_guard<std::mutex> lock{ mutex };
         return metrics.find(hash) != metrics.end();
       }
@@ -262,8 +262,9 @@ namespace prometheus {
 
       static const Metric::Type static_type = CustomMetric::static_type;
 
-      CustomFamily(const std::string& name, const std::string& help, const Family::Labels& constant_labels)
-        : Family(static_type, name, help, constant_labels) {}
+      CustomFamily(const std::string& name_, const std::string& help_,
+                   const Family::Labels& constant_labels_)
+        : Family(static_type, name_, help_, constant_labels_) {}
 
       /// \brief Add a new dimensional data.
       ///
