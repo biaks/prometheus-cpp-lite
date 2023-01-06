@@ -103,9 +103,9 @@ namespace prometheus {
           cumulative_count += static_cast<std::size_t>(bucket_counts_[i].Get());
           auto bucket = ClientMetric::Bucket{};
           bucket.cumulative_count = cumulative_count;
-          bucket.upper_bound = static_cast<double>((i == bucket_boundaries_.size()
-                                                    ? std::numeric_limits<Value>::infinity()
-                                                    : bucket_boundaries_[i]));
+          bucket.upper_bound = i == bucket_boundaries_.size()
+                               ? std::numeric_limits<double>::infinity()
+                               : static_cast<double>(bucket_boundaries_[i]);
           metric.histogram.bucket.push_back(std::move(bucket));
         }
         metric.histogram.sample_count = cumulative_count;
