@@ -29,6 +29,7 @@ namespace prometheus {
   /// a data race.
   template <typename Value_ = uint64_t>
   class Histogram : public Metric {
+
     public:
       using Value  = Value_;
       using BucketBoundaries = std::vector<Value>;
