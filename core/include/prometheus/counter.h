@@ -28,7 +28,7 @@ namespace prometheus {
   template <typename Value_ = uint64_t>
   class Counter : public Metric {
 
-    std::atomic<Value_> value{ 0 };
+    std::atomic<Value_> value{};
 
   public:
 
