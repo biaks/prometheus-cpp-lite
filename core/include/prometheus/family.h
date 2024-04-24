@@ -56,8 +56,8 @@ namespace prometheus {
     public:
 
       using Hash      = std::size_t;
-      using Label     = std::pair<const std::string, const std::string>;
-      using Labels    = std::map <const std::string, const std::string>;
+      using Label     = std::pair<std::string, std::string>;
+      using Labels    = std::map <std::string, std::string>;
       using MetricPtr = std::unique_ptr<Metric>;
 
       const   Metric::Type                 type;
