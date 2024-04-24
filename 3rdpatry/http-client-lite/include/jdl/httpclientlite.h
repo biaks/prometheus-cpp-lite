@@ -33,6 +33,8 @@
 # define PLATFORM_LINUX
 #elif defined (_WIN32) || defined (_WIN64)
 # define PLATFORM_WINDOWS
+#elif defined (__APPLE__)
+# define PLATFORM_APPLE
 #else
 /* TODO:
  *  - Added Apple OS */
@@ -59,7 +61,7 @@
 
 # pragma comment(lib, "ws2_32.lib")
 
-#elif defined (PLATFORM_LINUX)
+#elif defined (PLATFORM_LINUX) || defined (PLATFORM_APPLE)
 # include <unistd.h>
 # include <sys/socket.h>
 # include <netdb.h>
