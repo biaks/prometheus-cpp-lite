@@ -53,8 +53,8 @@
 #include <sys/types.h>
 
 #if defined (PLATFORM_WINDOWS)
-# include <WinSock2.h>
-# include <WS2tcpip.h>
+# include <winsock2.h>
+# include <ws2tcpip.h>
 
   typedef SOCKET socktype_t;
   typedef int socklen_t;
